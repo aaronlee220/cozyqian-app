@@ -3,6 +3,8 @@
   "appName": "CozyQian",
   "webDir": "www",
   "server": {
-    "androidScheme": "https"
+    "cleartext": true,
+    "androidScheme": "http",
+    "allowNavigation": ["154.51.40.17:*"]
   }
 }
