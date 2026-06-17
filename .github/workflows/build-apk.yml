@@ -16,18 +16,21 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
+      
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
+      - name: Accept Android licenses
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
       
-      - name: Build APK (debug)
+      - name: Build APK
         working-directory: android
         run: |
           chmod +x gradlew
+          export ANDROID_HOME=$ANDROID_HOME
+          export ANDROID_SDK_ROOT=$ANDROID_HOME
           ./gradlew assembleDebug --no-daemon
       
       - name: Upload APK
