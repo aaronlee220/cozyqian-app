@@ -1,0 +1,8 @@
+{
+  "appId": "com.cozyqian.app",
+  "appName": "CozyQian",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

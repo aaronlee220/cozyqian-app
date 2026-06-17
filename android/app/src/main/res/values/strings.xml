@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CozyQian</string>
+    <string name="title_activity_main">CozyQian</string>
+    <string name="package_name">com.cozyqian.app</string>
+    <string name="custom_url_scheme">com.cozyqian.app</string>
+</resources>
