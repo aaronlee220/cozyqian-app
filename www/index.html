@@ -710,7 +710,7 @@ function recalcProfit(){
 function openNewOrder(){
   window.editId=null;
   showF({
-    cozyqian_contract:'',order_date:'',product_name:'',purchase_qty:0,unit_price:0,
+    customer_id:'',customer_name:'',cozyqian_contract:'',order_date:'',product_name:'',purchase_qty:0,unit_price:0,
     other_fee:0,total_price:0,notes:'',qianshang_contract:'',qianshang_revenue:0,
     purchase_cost:0,inland_fee:0,pickup_fee:0,custom_fee:0,misc_fee:0,
     logistics_method:'',shipping_spec:'',arrival_date:'',departure_date:'',logistics_cost:0,
@@ -934,7 +934,10 @@ function showF(o){
   h+='<div class="pb2" style="color:#999"><div class="v">⏳</div><div class="l">利润率</div></div>';
   }
   h+='</div>';
-  h+='<div class="sec">🇲🇾 客户订单</div><div class="grid">';
+  h+='<div class="sec">🇲🇾 客户订单</div>';
+  h+='<select id="ef_customer_id" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:8px" onchange="document.getElementById(\'ef_customer_name\').value=this.options[this.selectedIndex]&&this.options[this.selectedIndex].getAttribute(\'data-name\')||\'\'"><option value="">选择客户...</option></select>';
+  h+='<input type="hidden" id="ef_customer_name" value="'+es(o.customer_name||'')+'">';
+  h+='<div class="grid">';
   [['cozyqian_contract','合同号'],['order_date','日期'],['product_name','品名'],
    ['purchase_qty','数量','n'],['unit_price','单价','n'],['other_fee','其他','n'],
    ['total_price','总价','n'],['notes','备注','textarea']].forEach(f=>{
@@ -965,12 +968,13 @@ function showF(o){
   h+='<button class="btn-d" onclick="delO('+o.id+')">🗑</button>';
   h+='<button class="btn-s" onclick="saveO()">💾 保存</button></div>';
   document.getElementById('mB').innerHTML=h;
+  loadCustDropdown();
   oM();
 }
 
 async function saveO(){
   const data={};
-  ['cozyqian_contract','order_date','product_name','purchase_qty','unit_price',
+  ['customer_id','customer_name','cozyqian_contract','order_date','product_name','purchase_qty','unit_price',
    'other_fee','total_price','notes','qianshang_contract','qianshang_revenue',
    'purchase_cost','inland_fee','pickup_fee','custom_fee','misc_fee',
    'logistics_method','shipping_spec','arrival_date','departure_date','logistics_cost'].forEach(k=>{
@@ -1003,6 +1007,22 @@ async function saveO(){
 async function delO(id){
   if(!confirm('删除？'))return;
   try{await fetch(API+'/api/orders/'+id,{method:'DELETE'});t('已删');cM();loadO()}catch(e){t('失败')}
+}
+
+async function loadCustDropdown(){
+  try{
+    const r=await fetch(API+'/api/customers');
+    const d=await r.json();
+    const cs=d.customers||[];
+    const el=document.getElementById('ef_customer_id');
+    if(!el)return;
+    var selVal=document.getElementById('ef_customer_name').value;
+    var h='<option value="">选择客户...</option>';
+    cs.forEach(function(c){
+      h+='<option value="'+c.id+'" data-name="'+es(c.name)+'"'+(c.name===selVal?' selected':'')+'>'+es(c.name)+(c.phone?' ('+es(c.phone)+')':'')+'</option>';
+    });
+    el.innerHTML=h;
+  }catch(e){}
 }
 
 function oM(){document.getElementById('modal').classList.add('active')}
